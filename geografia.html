@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografia do Paraná - Mapa Interativo</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --primary-green: #0a3a20;
+            --accent-gold: #d4af37;
+            --text-white: #ffffff;
+            --text-muted: #e0e0e0;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(15px);
+            --font-main: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #03120a 0%, #0a3a20 100%);
+            background-attachment: fixed;
+            color: var(--text-white);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header Menu */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 58, 32, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gold-text {
+            color: var(--accent-gold);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            color: var(--accent-gold);
+        }
+
+        .btn-explore {
+            border: 1px solid var(--accent-gold);
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Layout da Tela de Geografia */
+        .geo-container {
+            display: flex;
+            height: 100vh;
+            padding-top: 90px; /* Desconto do Header */
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Lado Esquerdo: O Mapa */
+        .map-section {
+            flex: 1.3;
+            height: 100%;
+            position: relative;
+            padding: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #03120a;
+        }
+
+        /* Lado Direito: Painel de Informações */
+        .info-panel {
+            flex: 0.9;
+            height: 100%;
+            background: rgba(10, 58, 32, 0.25);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-left: 1px solid var(--glass-border);
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .panel-title h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .region-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        /* Cards de Atributos Geográficos */
+        .geo-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: transform 0.3s;
+        }
+
+        .geo-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .geo-icon {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .geo-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text-white);
+        }
+
+        .geo-details p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Customização dos popups do Leaflet para casar com o tema escuro */
+        .leaflet-popup-content-wrapper {
+            background: rgba(3, 18, 10, 0.9) !important;
+            color: #fff !important;
+            border: 1px solid var(--accent-gold);
+            font-family: var(--font-main);
+        }
+        .leaflet-popup-tip {
+            background: rgba(3, 18, 10, 0.9) !important;
+            border-left: 1px solid var(--accent-gold);
+            border-bottom: 1px solid var(--accent-gold);
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .geo-container { flex-direction: column; overflow-y: auto; height: auto; }
+            .map-section { height: 50vh; flex: none; }
+            .info-panel { height: auto; flex: none; border-left: none; border-top: 1px solid var(--glass-border); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <i class="fa-solid fa-monument gold-text"></i>
+            <span>Museu Virtual <b class="gold-text">PR</b></span>
+        </div>
+        <nav class="nav-menu">
+            <a href="index.html">Início</a>
+            <a href="historia.html">História</a>
+            <a href="geografia.html" class="active">Geografia</a>
+            <a href="#">Artes</a>
+            <a href="#" class="btn-explore">Explorar 3D</a>
+        </nav>
+    </header>
+
+    <main class="geo-container">
+        
+        <section class="map-section">
+            <div id="map"></div>
+        </section>
+
+        <section class="info-panel" id="info-panel">
+            <div class="panel-title">
+                <h1 id="region-title">Geografia do Paraná</h1>
+                <p id="region-subtitle" class="gold-text">Selecione um marcador dourado no mapa para explorar os detalhes da região.</p>
+                <span id="region-badge" class="region-badge" style="display: none;">Paraná</span>
+            </div>
+
+            <div class="geo-card">
+                <div class="geo-icon"><i class="fa-solid fa-mountain"></i></div>
+                <div class="geo-details">
+                    <h3>Relevo & Altitude</h3>
+                    <p id="geo-relevo">O estado possui um relevo marcado por planaltos que descem em degraus em direção ao rio Paraná. Dividido entre Litoral, Primeiro, Segundo e Terceiro planalto.</p>
+                </div>
+            </div>
+
+            <div class="geo-card">
+                <div class="geo-icon"><i class="fa-solid fa-cloud-sun"></i></div>
+                <div class="geo-details">
+                    <h3>Clima & Vegetação</h3>
+                    <p id="geo-clima">Predomínio de clima Subtropical Cfa e Cfb (com invernos rigorosos nas áreas mais altas). Lar da histórica e majestosa Floresta de Araucárias.</p>
+                </div>
+            </div>
+
+            <div class="geo-card">
+                <div class="geo-icon"><i class="fa-solid fa-water"></i></div>
+                <div class="geo-details">
+                    <h3>Hidrografia</h3>
+                    <p id="geo-hidro">Bacias hidrográficas ricas e de alto potencial energético. Destaque absoluto para os rios Iguaçu, Paranapanema, Paraná e Ivaí.</p>
+                </div>
+            </div>
+
+            <div class="geo-card">
+                <div class="geo-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="geo-details">
+                    <h3>Economia & Cidades</h3>
+                    <p id="geo-economia">Uma potência no agronegócio global, forte polo industrial automotivo e tecnológico, além de abrigar uma das maiores maravilhas naturais do planeta.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // 1. INICIALIZAÇÃO DO MAPA (Centralizado no Paraná)
+        // Coordenadas aproximadas do centro do Paraná: -24.7, -51.5
+        const map = L.map('map').setView([-24.75, -51.60], 7);
+
+        // Adiciona uma camada de mapa com visual escuro elegante (CartoDB Dark Matter)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 12,
+            minZoom: 6
+        }).addTo(map);
+
+        // 2. BANCO DE DADOS GEOGRÁFICO DO ESTADO
+        const geoData = {
+            curitiba: {
+                title: "Curitiba e Região Metropolitana",
+                badge: "Primeiro Planalto",
+                relevo: "Planalto cristalino plano-ondulado com altitude média de 934 metros acima do nível do mar.",
+                clima: "Clima Subtropical Cfb, com verões amenos e invernos frios. Vegetação original composta por campos limpos e capões de Araucária.",
+                hidro: "Cortada pela bacia do Alto Iguaçu, contando com rios importantes como o Rio Belém e o Rio Barigui.",
+                economia: "Forte polo industrial (automotivo, mecânico), centro administrativo estadual e referência internacional em planejamento urbano."
+            },
+            foz: {
+                title: "Foz do Iguaçu e Extremo Oeste",
+                badge: "Terceiro Planalto / Calha do Paraná",
+                relevo: "Planalto basáltico plano, declinando suavemente em direção ao Rio Paraná com altitudes em torno de 180 metros.",
+                clima: "Subtropical Cfa, quente, úmido e com verões intensos. Antiga área de transição para a Floresta Estacional Semidecidual.",
+                hidro: "Encontro dos gigantescos rios Iguaçu e Paraná. Abriga as Cataratas do Iguaçu e o imenso reservatório de Itaipu Binacional.",
+                economia: "Baseada fortemente no turismo internacional, produção de energia elétrica limpa, comércio de fronteira e logística de exportação."
+            },
+            londrina: {
+                title: "Londrina, Maringá e Norte Pioneiro",
+                badge: "Terceiro Planalto / Norte",
+                relevo: "Relevo levemente ondulado composto pela famosa Terra Roxa (de origem vulcânica), extremamente fértil, média de 600m de altitude.",
+                clima: "Transição para o clima tropical (Cfa), invernos secos e quentes. Vegetação original de mata densa tropical.",
+                hidro: "Abastecido pelas sub-bacias do Rio Tibagi, Rio Paranapanema e Rio Pirapó.",
+                economia: "Eixo de altíssimo desenvolvimento impulsionado pelo agronegócio de alta tecnologia, indústrias alimentícias, saúde e eixos universitários."
+            },
+            ponta: {
+                title: "Ponta Grossa e Campos Gerais",
+                badge: "Segundo Planalto",
+                relevo: "Marcado por escarpas e formações rochosas espetaculares de arenito (Vila Velha) com altitudes variando entre 800m e 1000m.",
+                clima: "Subtropical Cfb, úmido, propenso a geadas fortes no inverno. Mistura de campos nativos nativos e bosques de pinhais.",
+                hidro: "Bacia do Rio Tibagi e Rio Pitangui, com canions e belíssimas quedas d'água naturais.",
+                economia: "Grande entroncamento rodoferroviário do Sul, um dos maiores polos de agroindústria e cooperativismo da América Latina."
+            },
+            paranagua: {
+                title: "Paranaguá e o Litoral Paranaense",
+                badge: "Planície Litorânea",
+                relevo: "Planícies costeiras arenosas e restingas travadas abruptamente pela majestosa muralha da Serra do Mar.",
+                clima: "Clima Superúmido Tropical/Subtropical de baixada, sem estação seca definida. Lar da preservada e exuberante Mata Atlântica.",
+                hidro: "Complexo estuarino da Baía de Paranaguá, alimentado por pequenos rios de serra de fluxo rápido.",
+                economia: "Comandada pela atividade portuária de Paranaguá (um dos portos de grãos mais eficientes do mundo), turismo de praias e pesca."
+            }
+        };
+
+        // 3. ADICIONANDO MARCADORES DOURADOS PERSONALIZADOS
+        // Ícone customizado dourado usando folha de estilo interna do Leaflet
+        const goldIcon = L.divIcon({
+            html: '<i class="fa-solid fa-location-dot" style="color: #d4af37; font-size: 24px; filter: drop-shadow(0 0 5px rgba(212,175,55,0.7));"></i>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -20],
+            className: 'custom-marker'
+        });
+
+        // Configuração dos Pontos Geográficos no Mapa
+        const markers = [
+            { coords: [-25.4284, -49.2733], key: 'curitiba', popup: "Curitiba (Capitál)" },
+            { coords: [-25.5478, -54.5881], key: 'foz', popup: "Foz do Iguaçu" },
+            { coords: [-23.3106, -51.1628], key: 'londrina', popup: "Londrina & Região Norte" },
+            { coords: [-25.0950, -50.1619], key: 'ponta', popup: "Campos Gerais" },
+            { coords: [-25.5204, -48.5093], key: 'paranagua', popup: "Paranaguá & Litoral" }
+        ];
+
+        // Mapeia e adiciona as funções de clique a cada ponto
+        markers.forEach(m => {
+            const marker = L.marker(m.coords, { icon: goldIcon }).addTo(map);
+            marker.bindPopup(`<b>${m.popup}</b>`);
+
+            marker.on('click', () => {
+                atualizarPainelInfo(m.key);
+            });
+        });
+
+        // 4. ATUALIZAÇÃO DINÂMICA DO PAINEL DIREITO (GSAP)
+        function atualizarPainelInfo(key) {
+            const data = geoData[key];
+            if (!data) return;
+
+            // Cria um efeito "piscar" suave de transição de dados com GSAP
+            gsap.fromTo('#info-panel > *', 
+                { opacity: 0, x: 20 }, 
+                { opacity: 1, x: 0, duration: 0.4, stagger: 0.05 }
+            );
+
+            // Injeta os dados nos elementos do painel
+            document.getElementById('region-title').innerText = data.title;
+            document.getElementById('region-subtitle').style.display = 'none'; // Esconde a dica inicial
+            
+            const badge = document.getElementById('region-badge');
+            badge.innerText = data.badge;
+            badge.style.display = 'inline-block';
+
+            document.getElementById('geo-relevo').innerText = data.relevo;
+            document.getElementById('geo-clima').innerText = data.clima;
+            document.getElementById('geo-hidro').innerText = data.hidro;
+            document.getElementById('geo-economia').innerText = data.economia;
+        }
+    </script>
+</body>
+</html>
