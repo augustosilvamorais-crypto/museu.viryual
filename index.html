@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museu Virtual do Paraná</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="video-container">
+        <div class="overlay"></div>
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-dense-forest-23114-large.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <header class="main-header">
+        <div class="logo">
+            <i class="fa-solid fa-monument gold-text"></i>
+            <span>Museu Virtual <b class="gold-text">PR</b></span>
+        </div>
+        <nav class="nav-menu">
+            <a href="index.html" class="active">Início</a>
+            <a href="historia.html">História</a>
+            <a href="geografia.html">Geografia</a>
+            <a href="artes.html">Artes</a>
+            <a href="explorador.html" class="btn-explore">Explorar 3D</a>
+        </nav>
+        <div class="header-actions">
+            <button id="lang-toggle">EN</button>
+            <button id="theme-toggle"><i class="fa-solid fa-moon"></i></button>
+        </div>
+    </header>
+
+    <main class="hero-container">
+        <section class="hero-content">
+            <h2 class="subtitle-hero">Descubra a Terra dos Pinheirais</h2>
+            <h1 class="title-hero">Uma Jornada pela História, Arte e Natureza</h1>
+            <p class="description-hero">
+                Explore o Paraná através de uma experiência imersiva e interativa. Das origens indígenas ao futuro tecnológico, viaje no tempo e no espaço.
+            </p>
+            <div class="hero-buttons">
+                <a href="#sections" class="btn-primary">Iniciar Tour</a>
+                <a href="explorador.html" class="btn-secondary"><i class="fa-solid fa-vr-cardboard"></i> Modo 3D</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/particles.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
