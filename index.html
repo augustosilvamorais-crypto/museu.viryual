@@ -3,12 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Museu Virtual do Paraná</title>
+    <title>Museu Virtual do Paraná - Home</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animations.css">
+
+    <style>
+        :root {
+            --primary-green: #0a3a20;
+            --accent-gold: #d4af37;
+            --text-white: #ffffff;
+            --text-muted: #e0e0e0;
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(12px);
+            --font-main: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #03120a;
+            color: var(--text-white);
+            overflow: hidden; /* Mantém a tela fixa para o efeito cinematográfico */
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Container de Fundo (Simulado por degradê caso o vídeo falhe) */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background: #03120a;
+        }
+
+        #bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 58, 32, 0.8) 0%, rgba(3, 18, 10, 0.95) 100%);
+            z-index: 1;
+        }
+
+        /* Canvas de Partículas */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Header Glassmorphism */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 10;
+            opacity: 0; /* Começa invisível para o GSAP ativar */
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gold-text {
+            color: var(--accent-gold);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            color: var(--accent-gold);
+        }
+
+        .btn-explore {
+            border: 1px solid var(--accent-gold);
+            padding: 8px 20px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-explore:hover {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .header-actions button {
+            background: none;
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        /* Hero Content */
+        .hero-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+            z-index: 5;
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .subtitle-hero {
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            opacity: 0;
+        }
+
+        .title-hero {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 25px;
+            opacity: 0;
+        }
+
+        .description-hero {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 35px;
+            opacity: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent-gold);
+            color: #03120a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--text-white);
+            color: var(--text-white);
+            background: transparent;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+    </style>
 </head>
 <body>
 
@@ -21,39 +232,113 @@
         </video>
     </div>
 
-    <header class="main-header">
+    <header class="main-header" id="main-header">
         <div class="logo">
             <i class="fa-solid fa-monument gold-text"></i>
             <span>Museu Virtual <b class="gold-text">PR</b></span>
         </div>
         <nav class="nav-menu">
-            <a href="index.html" class="active">Início</a>
-            <a href="historia.html">História</a>
-            <a href="geografia.html">Geografia</a>
-            <a href="artes.html">Artes</a>
-            <a href="explorador.html" class="btn-explore">Explorar 3D</a>
+            <a href="#" class="active">Início</a>
+            <a href="#">História</a>
+            <a href="#">Geografia</a>
+            <a href="#">Artes</a>
+            <a href="#" class="btn-explore">Explorar 3D</a>
         </nav>
         <div class="header-actions">
-            <button id="lang-toggle">EN</button>
-            <button id="theme-toggle"><i class="fa-solid fa-moon"></i></button>
+            <button>EN</button>
+            <button><i class="fa-solid fa-moon"></i></button>
         </div>
     </header>
 
     <main class="hero-container">
         <section class="hero-content">
-            <h2 class="subtitle-hero">Descubra a Terra dos Pinheirais</h2>
-            <h1 class="title-hero">Uma Jornada pela História, Arte e Natureza</h1>
-            <p class="description-hero">
-                Explore o Paraná através de uma experiência imersiva e interativa. Das origens indígenas ao futuro tecnológico, viaje no tempo e no espaço.
+            <h2 class="subtitle-hero" id="hero-sub">Descubra a Terra dos Pinheirais</h2>
+            <h1 class="title-hero" id="hero-title">Uma Jornada pela História, Arte e Natureza</h1>
+            <p class="description-hero" id="hero-desc">
+                Explore o Paraná através de uma experiência imersiva e interativa. Das origens indígenas ao futuro tecnológico, viaje no tempo e no espaço sem sair de casa.
             </p>
-            <div class="hero-buttons">
-                <a href="#sections" class="btn-primary">Iniciar Tour</a>
-                <a href="explorador.html" class="btn-secondary"><i class="fa-solid fa-vr-cardboard"></i> Modo 3D</a>
+            <div class="hero-buttons" id="hero-btns">
+                <a href="#" class="btn-primary">Iniciar Tour</a>
+                <a href="#" class="btn-secondary"><i class="fa-solid fa-vr-cardboard"></i> Modo 3D</a>
             </div>
         </section>
     </main>
 
-    <script src="js/particles.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        // 1. ENGINE DE PARTÍCULAS (CANVAS)
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = '#d4af37'; // Poeira dourada
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < 70; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // 2. CONTROLE DE ANIMAÇÃO DE ENTRADA (GSAP)
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+            // Entrada suave do Menu Superior
+            tl.to('#main-header', {
+                opacity: 1,
+                y: 0,
+                duration: 1
+            });
+
+            // Entrada sequencial dos textos (Stagger effect)
+            tl.to('#hero-sub', { opacity: 1, x: 0, duration: 0.6 }, '-=0.4');
+            tl.to('#hero-title', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5');
+            tl.to('#hero-desc', { opacity: 1, duration: 0.8 }, '-=0.5');
+            tl.to('#hero-btns', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4');
+        });
+    </script>
 </body>
 </html>
