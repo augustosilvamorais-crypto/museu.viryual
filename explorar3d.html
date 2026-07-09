@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorar 3D — Museu Virtual do Paraná</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/explorar3d.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">Museu Virtual <span class="gold-text">PR</span></div>
+        <nav class="nav-menu">
+            <a href="index.html">Início</a>
+            <a href="historia.html">História</a>
+            <a href="geografia.html">Geografia</a>
+            <a href="artes.html">Artes</a>
+            <a href="explorar3d.html" class="active btn-explore">Explorar 3D</a>
+        </nav>
+        <div class="header-actions">
+            <button>PT</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="explorar-hero">
+            <div class="explorar-hero-content">
+                <span class="section-tag">EXPERIÊNCIA INTERATIVA</span>
+                <h1>Explore o Paraná em 3D</h1>
+                <p>Use o mouse para girar, zoom e clicar nos marcadores</p>
+            </div>
+        </section>
+
+        <section class="canvas-container">
+            <div id="three-container"></div>
+            <div id="info-panel" class="info-panel hidden">
+                <h3 id="info-title"></h3>
+                <p id="info-desc"></p>
+                <button id="info-close">✕</button>
+            </div>
+            <div class="controls-hint">
+                <span>🖱️ Arraste para girar · Scroll para zoom · Clique nos pontos dourados</span>
+            </div>
+        </section>
+
+        <section class="explorar-footer-info">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h4>Cidades para Explorar</h4>
+                        <ul>
+                            <li><strong>Curitiba</strong> — Capital</li>
+                            <li><strong>Londrina</strong> — Café</li>
+                            <li><strong>Maringá</strong> — Planejada</li>
+                            <li><strong>Foz do Iguaçu</strong> — Cataratas</li>
+                            <li><strong>Castro</strong> — Tropeirismo</li>
+                            <li><strong>Paranaguá</strong> — Porto</li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Dica</h4>
+                        <p>Clique nos pontos dourados no mapa 3D para ver informações sobre cada cidade.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Three.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="js/explorar3d.js"></script>
+</body>
+</html>
