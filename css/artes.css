@@ -1,0 +1,538 @@
+/* ==========================================
+   PÁGINA ARTES — MUSEU VIRTUAL DO PARANÁ
+   TEMA: Migrações Internas + Theodoro Braga
+   ========================================== */
+
+:root {
+    --artes-primary: #8B4513;
+    --artes-secondary: #D2691E;
+    --artes-bg: #1a0f0a;
+    --artes-card-bg: rgba(139, 69, 19, 0.08);
+    --artes-border: rgba(210, 105, 30, 0.2);
+}
+
+/* Reset para página de rolagem */
+body {
+    overflow-y: auto;
+    height: auto;
+    background: var(--artes-bg);
+}
+
+/* Container padrão */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Section Header */
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: var(--text-white);
+    margin: 15px 0 10px;
+}
+
+.section-header .subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.gold-label {
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Hero da página Artes */
+.artes-hero {
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #1a0f0a 0%, #2d1a0e 50%, #0a3a20 100%);
+    position: relative;
+    margin-top: 80px;
+}
+
+.artes-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="90" font-size="90" opacity="0.03">☕</text></svg>') repeat;
+    opacity: 0.3;
+}
+
+.artes-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.artes-hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    margin: 20px 0 15px;
+    text-shadow: 0 2px 20px rgba(212, 175, 55, 0.3);
+}
+
+.artes-hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.section-tag {
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-gold);
+    padding: 5px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+}
+
+/* Introdução */
+.artes-intro {
+    padding: 80px 0;
+    background: linear-gradient(180deg, var(--artes-bg) 0%, rgba(10, 58, 32, 0.1) 100%);
+}
+
+.intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.intro-text .gold-label {
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.intro-text h2 {
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    color: var(--text-white);
+}
+
+.intro-text p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.image-card {
+    background: var(--artes-card-bg);
+    border: 1px solid var(--artes-border);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+}
+
+.card-placeholder {
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, rgba(139,69,19,0.2), rgba(212,175,55,0.1));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.card-placeholder span {
+    font-size: 5rem;
+}
+
+.card-caption {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Seção do Artista */
+.artista-section {
+    padding: 80px 0;
+    background: rgba(139, 69, 19, 0.05);
+    border-top: 1px solid var(--artes-border);
+    border-bottom: 1px solid var(--artes-border);
+}
+
+.artista-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 50px;
+}
+
+.artista-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 25px;
+    padding: 15px 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border-left: 3px solid var(--accent-gold);
+    border-radius: 0 10px 10px 0;
+}
+
+.artista-meta span {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.artista-info p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.quote-box {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.quote-box p {
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+    line-height: 1.6;
+}
+
+.quote-box span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.artista-obras h3 {
+    color: var(--accent-gold);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.obra-card {
+    margin-bottom: 15px;
+}
+
+.obra-placeholder {
+    background: var(--artes-card-bg);
+    border: 1px solid var(--artes-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: 0.3s;
+}
+
+.obra-placeholder:hover {
+    border-color: var(--accent-gold);
+    transform: translateX(5px);
+}
+
+.placeholder-icon {
+    font-size: 2rem;
+    min-width: 50px;
+    text-align: center;
+}
+
+.obra-placeholder p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Galeria */
+.galeria-section {
+    padding: 80px 0;
+}
+
+.galeria-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.galeria-item {
+    background: var(--artes-card-bg);
+    border: 1px solid var(--artes-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.galeria-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+}
+
+.galeria-img-placeholder {
+    width: 100%;
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+
+.migrante1 { background: linear-gradient(135deg, #2d1a0e, #4a2c15); }
+.migrante2 { background: linear-gradient(135deg, #1a3a20, #2d5a30); }
+.migrante3 { background: linear-gradient(135deg, #1a1a2e, #2d2d4a); }
+.migrante4 { background: linear-gradient(135deg, #0a0a1a, #1a1a3a); }
+
+.img-overlay-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+}
+
+.img-overlay-content span {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.img-overlay-content h4 {
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+}
+
+.galeria-texto {
+    padding: 25px;
+}
+
+.galeria-texto h4 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--text-white);
+}
+
+.tecnicas {
+    color: var(--accent-gold);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.galeria-texto p {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Conexão */
+.conexao-section {
+    padding: 80px 0;
+    background: rgba(10, 58, 32, 0.08);
+}
+
+.conexao-content {
+    text-align: center;
+}
+
+.conexao-content h2 {
+    font-size: 2rem;
+    margin: 15px 0 50px;
+    color: var(--text-white);
+}
+
+.conexao-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.conexao-item {
+    background: var(--artes-card-bg);
+    border: 1px solid var(--artes-border);
+    border-radius: 16px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.conexao-item:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-5px);
+}
+
+.conexao-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.conexao-item h4 {
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.conexao-item p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Atividade */
+.atividade-section {
+    padding: 80px 0;
+}
+
+.atividade-box {
+    background: linear-gradient(135deg, rgba(139,69,19,0.1), rgba(212,175,55,0.05));
+    border: 1px solid var(--accent-gold);
+    border-radius: 24px;
+    padding: 50px;
+    text-align: center;
+}
+
+.atividade-box h2 {
+    font-size: 2rem;
+    color: var(--text-white);
+    margin: 10px 0 15px;
+}
+
+.atividade-box > p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+}
+
+.atividade-opcoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.opcao {
+    background: var(--artes-card-bg);
+    border: 1px solid var(--artes-border);
+    border-radius: 16px;
+    padding: 35px;
+    text-align: left;
+}
+
+.opcao h3 {
+    color: var(--accent-gold);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.opcao p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.opcao ul {
+    list-style: none;
+    padding: 0;
+}
+
+.opcao ul li {
+    color: var(--text-muted);
+    padding: 5px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.opcao ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--accent-gold);
+}
+
+.atividade-footer {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.atividade-footer p {
+    color: var(--text-white);
+    font-size: 1.1rem;
+}
+
+/* Footer principal */
+.main-footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.main-footer p {
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.footer-small {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+/* Partículas canvas fixo */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Responsivo */
+@media (max-width: 968px) {
+    .intro-grid,
+    .artista-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .galeria-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .conexao-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .atividade-opcoes {
+        grid-template-columns: 1fr;
+    }
+
+    .artes-hero-content h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .conexao-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .atividade-box {
+        padding: 30px 20px;
+    }
+}
