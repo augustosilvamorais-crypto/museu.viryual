@@ -5,1225 +5,320 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Museu Virtual do Paraná - Home</title>
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <style>
-        :root {
-            --primary-green: #0a3a20;
-            --accent-gold: #d4af37;
-            --text-white: #ffffff;
-            --text-muted: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(12px);
-            --font-main: 'Montserrat', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-main);
-            background-color: #03120a;
-            color: var(--text-white);
-            overflow: hidden; /* Mantém a tela fixa para o efeito cinematográfico */
-            height: 100vh;
-            position: relative;
-        }
-
-        /* Container de Fundo (Simulado por degradê caso o vídeo falhe) */
-        .video-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            overflow: hidden;
-            background: #03120a;
-        }
-
-        #bg-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(10, 58, 32, 0.8) 0%, rgba(3, 18, 10, 0.95) 100%);
-            z-index: 1;
-        }
-
-        /* Canvas de Partículas */
-        #particles-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* Header Glassmorphism */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 10;
-            opacity: 0; /* Começa invisível para o GSAP ativar */
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gold-text {
-            color: var(--accent-gold);
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-
-        .nav-menu a:hover, .nav-menu a.active {
-            color: var(--accent-gold);
-        }
-
-        .btn-explore {
-            border: 1px solid var(--accent-gold);
-            padding: 8px 20px;
-            border-radius: 20px;
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        .btn-explore:hover {
-            background: var(--accent-gold);
-            color: #000;
-        }
-
-        .header-actions button {
-            background: none;
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-
-        /* Hero Content */
-        .hero-container {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 0 10%;
-            position: relative;
-            z-index: 5;
-        }
-
-        .hero-content {
-            max-width: 650px;
-        }
-
-        .subtitle-hero {
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-            opacity: 0;
-        }
-
-        .title-hero {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 25px;
-            opacity: 0;
-        }
-
-        .description-hero {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 35px;
-            opacity: 0;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            opacity: 0;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 15px 35px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--accent-gold);
-            color: #03120a;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-        }
-
-        .btn-secondary {
-            border: 1px solid var(--text-white);
-            color: var(--text-white);
-            background: transparent;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-3px);
-        }
-    </style>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS do Projeto -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
 
+    <!-- PARTÍCULAS -->
     <canvas id="particles-canvas"></canvas>
 
+    <!-- VÍDEO DE FUNDO -->
     <div class="video-container">
-        <div class="overlay"></div>
-        <video autoplay muted loop playsinline id="bg-video">
+        <video autoplay muted loop id="bg-video">
             <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-dense-forest-23114-large.mp4" type="video/mp4">
         </video>
+        <div class="overlay"></div>
     </div>
 
-    <header class="main-header" id="main-header">
-        <div class="logo">
-            <i class="fa-solid fa-monument gold-text"></i>
-            <span>Museu Virtual <b class="gold-text">PR</b></span>
-        </div>
-        <nav class="nav-menu">
-            <a href="#" class="active">Início</a>
-            <a href="#">História</a>
-            <a href="#">Geografia</a>
-            <a href="#">Artes</a>
-            <a href="#" class="btn-explore">Explorar 3D</a>
-        </nav>
-        <div class="header-actions">
-            <button>EN</button>
-            <button><i class="fa-solid fa-moon"></i></button>
-        </div>
-    </header>
-
-    <main class="hero-container">
-        <section class="hero-content">
-            <h2 class="subtitle-hero" id="hero-sub">Descubra a Terra dos Pinheirais</h2>
-            <h1 class="title-hero" id="hero-title">Uma Jornada pela História, Arte e Natureza</h1>
-            <p class="description-hero" id="hero-desc">
-                Explore o Paraná através de uma experiência imersiva e interativa. Das origens indígenas ao futuro tecnológico, viaje no tempo e no espaço sem sair de casa.
-            </p>
-            <div class="hero-buttons" id="hero-btns">
-                <a href="#" class="btn-primary">Iniciar Tour</a>
-                <a href="#" class="btn-secondary"><i class="fa-solid fa-vr-cardboard"></i> Modo 3D</a>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        // 1. ENGINE DE PARTÍCULAS (CANVAS)
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
-                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = '#d4af37'; // Poeira dourada
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < 70; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
-
-        // 2. CONTROLE DE ANIMAÇÃO DE ENTRADA (GSAP)
-        window.addEventListener('load', () => {
-            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-
-            // Entrada suave do Menu Superior
-            tl.to('#main-header', {
-                opacity: 1,
-                y: 0,
-                duration: 1
-            });
-
-            // Entrada sequencial dos textos (Stagger effect)
-            tl.to('#hero-sub', { opacity: 1, x: 0, duration: 0.6 }, '-=0.4');
-            tl.to('#hero-title', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5');
-            tl.to('#hero-desc', { opacity: 1, duration: 0.8 }, '-=0.5');
-            tl.to('#hero-btns', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4');
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>História do Paraná - Linha do Tempo</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <style>
-        :root {
-            --primary-green: #0a3a20;
-            --accent-gold: #d4af37;
-            --text-white: #ffffff;
-            --text-muted: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(15px);
-            --font-main: 'Montserrat', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-main);
-            background: linear-gradient(135deg, #03120a 0%, #0a3a20 100%);
-            background-attachment: fixed;
-            color: var(--text-white);
-            overflow-x: hidden;
-            padding-bottom: 80px;
-        }
-
-        /* Canvas de Partículas */
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Header Menu */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 58, 32, 0.3);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gold-text {
-            color: var(--accent-gold);
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .nav-menu a:hover, .nav-menu a.active {
-            color: var(--accent-gold);
-        }
-
-        .btn-explore {
-            border: 1px solid var(--accent-gold);
-            padding: 8px 20px;
-            border-radius: 20px;
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        /* Container da Linha do Tempo */
-        .timeline-container {
-            position: relative;
-            z-index: 2;
-            padding: 150px 20px 50px 20px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .timeline-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .timeline-header h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .timeline-wrapper {
-            position: relative;
-        }
-
-        /* A Linha Central */
-        .timeline-line {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--accent-gold) 0%, rgba(212, 175, 55, 0.1) 100%);
-            transform: translateX(-50%);
-        }
-
-        /* Itens da Linha */
-        .timeline-item {
-            position: relative;
-            width: 50%;
-            padding: 20px 40px;
-            margin-bottom: 30px;
-            cursor: pointer;
-        }
-
-        .timeline-item.left {
-            left: 0;
-            text-align: right;
-        }
-
-        .timeline-item.right {
-            left: 50%;
-            text-align: left;
-        }
-
-        /* Pontos Dinâmicos na Linha */
-        .timeline-dot {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: var(--accent-gold);
-            border-radius: 50%;
-            top: 45px;
-            z-index: 3;
-            box-shadow: 0 0 10px var(--accent-gold);
-            transition: transform 0.3s;
-        }
-
-        .timeline-item:hover .timeline-dot {
-            transform: scale(1.4);
-        }
-
-        .left .timeline-dot { right: -8px; }
-        .right .timeline-dot { left: -8px; }
-
-        /* Cards Estilo Glassmorphism */
-        .timeline-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            border-radius: 15px;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-        }
-
-        .timeline-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .timeline-date {
-            color: var(--accent-gold);
-            font-weight: 600;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .timeline-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 12px;
-        }
-
-        .timeline-card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .btn-more {
-            margin-top: 15px;
-            background: none;
-            border: none;
-            color: var(--accent-gold);
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Janela Modal de Informações */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: rgba(10, 58, 32, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            padding: 40px;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.6rem;
-            cursor: pointer;
-        }
-
-        .modal-body h2 {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-        }
-
-        .modal-date-info {
-            color: var(--accent-gold);
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .modal-desc {
-            color: var(--text-muted);
-            line-height: 1.7;
-            font-size: 1.05rem;
-            margin-bottom: 25px;
-        }
-
-        .curiosity-box {
-            background: rgba(212, 175, 55, 0.08);
-            border-left: 4px solid var(--accent-gold);
-            padding: 20px;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .curiosity-box h4 {
-            color: var(--accent-gold);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Responsividade da Linha do Tempo */
-        @media (max-width: 768px) {
-            .timeline-line { left: 20px; }
-            .timeline-item { width: 100%; text-align: left !important; padding-left: 50px; padding-right: 10px; }
-            .timeline-item.right { left: 0; }
-            .timeline-dot { left: 12px !important; }
-        }
-    </style>
-</head>
-<body>
-
-    <canvas id="particles-canvas"></canvas>
-
+    <!-- ==================== HEADER PRINCIPAL (HERO) ==================== -->
     <header class="main-header">
         <div class="logo">
-            <i class="fa-solid fa-monument gold-text"></i>
-            <span>Museu Virtual <b class="gold-text">PR</b></span>
-        </div>
-        <nav class="nav-menu">
-            <a href="index.html">Início</a>
-            <a href="historia.html" class="active">História</a>
-            <a href="#">Geografia</a>
-            <a href="#">Artes</a>
-            <a href="#" class="btn-explore">Explorar 3D</a>
-        </nav>
-    </header>
-
-    <main class="timeline-container">
-        <div class="timeline-header">
-            <h1>História do Paraná</h1>
-            <p class="gold-text">Uma viagem cronológica pelos ciclos marcantes do estado</p>
-        </div>
-
-        <div class="timeline-wrapper">
-            <div class="timeline-line"></div>
-
-            <div class="timeline-item left" data-period="indigenas">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">PRÉ-COLONIAL</span>
-                    <h3>Povos Indígenas</h3>
-                    <p>As ricas tradições e a presença ancestral dos povos Kaingang, Guarani e Xokleng nas terras paranaenses.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </div>
-
-            <div class="timeline-item right" data-period="tropeirismo">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XVIII</span>
-                    <h3>O Tropeirismo</h3>
-                    <p>O movimento de tropas que desbravou caminhos, integrou o sul do país e fundou vilas históricas como a Lapa e Castro.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </div>
-
-            <div class="timeline-item left" data-period="ervamate">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XIX</span>
-                    <h3>Ciclo da Erva-Mate</h3>
-                    <p>O "ouro verde" que impulsionou a economia, gerou riquezas urbanas e pavimentou a emancipação política do Paraná.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </div>
-
-            <div class="timeline-item right" data-period="colonizacao">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XIX / XX</span>
-                    <h3>Imigração Europeia e Asiática</h3>
-                    <p>O mosaico multicultural formado por poloneses, ucranianos, italianos, alemães e japoneses no interior do estado.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div id="history-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-body">
-                <span id="modal-date" class="modal-date-info"></span>
-                <h2 id="modal-title"></h2>
-                <p id="modal-desc" class="modal-desc"></p>
-                <div class="curiosity-box">
-                    <h4><i class="fa-solid fa-lightbulb"></i> Você sabia?</h4>
-                    <p id="modal-curiosity"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 1. ENGINE DE PARTÍCULAS REUTILIZADA
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.3 - 0.15;
-                this.speedY = Math.random() * 0.3 - 0.15;
-                this.alpha = Math.random() * 0.4 + 0.2;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
-                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
-            }
-            draw() {
-                ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = '#d4af37';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore();
-            }
-        }
-        for(let i=0; i<60; i++) { particlesArray.push(new Particle()); }
-        function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); particlesArray.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
-        loop();
-
-        // 2. BANCO DE DADOS LOCAL DA LINHA DO TEMPO
-        const infoData = {
-            indigenas: {
-                title: "Povos Indígenas",
-                date: "Período Anterior à Colonização",
-                desc: "Originalmente, as terras paranaenses eram habitadas por orgulhosas nações nativas. Os Kaingang viviam nos planaltos centrais sob a sombra das florestas de Araucária. Os Guarani dominavam os vales dos grandes rios e o litoral, enquanto os Xokleng percorriam as serras densas. Deixaram um legado inestimável de nomes geográficos, respeito à natureza e culinária.",
-                curiosity: "A semente da Araucária, o Pinhão, era a base alimentar essencial para a sobrevivência dos povos Kaingang durante os rigorosos meses de inverno."
-            },
-            tropeirismo: {
-                title: "O Tropeirismo",
-                date: "Século XVIII",
-                desc: "Os tropeiros conduziam grandes comitivas de muares e gado bovino vindos do Rio Grande do Sul até as feiras do Sudeste. O trajeto feito por eles cruzava o Paraná de ponta a ponta. Os locais onde as tropas paravam para descansar, os chamados 'pousos', transformaram-se diretamente em cidades prósperas, como a Lapa, Ponta Grossa e Castro.",
-                curiosity: "O tradicional prato paranaense 'Entrevero de Pinhão' e o 'Arroz de Carreteiro' surgiram diretamente nos acampamentos improvisados das viagens tropeiras."
-            },
-            ervamate: {
-                title: "Ciclo da Erva-Mate",
-                date: "Século XIX",
-                desc: "A extração e a industrialização da Erva-Mate foram as grandes responsáveis pela arrancada financeira do Paraná no século XIX. O comércio gerou fortunas para barões locais e impulsionou a construção de ferrovias engenhosas para levar a produção até o litoral, criando a base para que o Paraná se separasse politicamente de São Paulo em 1853.",
-                curiosity: "O Barão do Serro Azul tornou-se o maior produtor de erva-mate do planeta e usou sua influência para modernizar os portos e a capital do estado."
-            },
-            colonizacao: {
-                title: "Imigração e Colonização",
-                date: "Século XIX / XX",
-                desc: "Para povoar as vastas terras do interior, o governo incentivou núcleos coloniais. Famílias polonesas, ucranianas, italianas, alemãs e, mais tarde, japonesas trouxeram suas bagagens culturais. Essa união desenhou o perfil agrícola, os traços arquitetônicos charmosos e as festas religiosas e folclóricas típicas do Paraná.",
-                curiosity: "A cidade de Prudentópolis, no interior do estado, abriga a maior comunidade de descendentes e falantes da língua ucraniana em toda a América Latina."
-            }
-        };
-
-        // 3. EVENTOS DE ABERTURA DO MODAL (GSAP)
-        const modal = document.getElementById('history-modal');
-        const closeBtn = document.querySelector('.close-modal');
-
-        document.querySelectorAll('.timeline-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const key = item.getAttribute('data-period');
-                const data = infoData[key];
-
-                if(data) {
-                    document.getElementById('modal-title').innerText = data.title;
-                    document.getElementById('modal-date').innerText = data.date;
-                    document.getElementById('modal-desc').innerText = data.desc;
-                    document.getElementById('modal-curiosity').innerText = data.curiosity;
-
-                    modal.classList.add('active');
-                    gsap.fromTo('.modal-content', 
-                        { scale: 0.85, opacity: 0 }, 
-                        { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' }
-                    );
-                }
-            });
-        });
-
-        function fechar() {
-            gsap.to('.modal-content', {
-                scale: 0.85, opacity: 0, duration: 0.3, onComplete: () => {
-                    modal.classList.remove('active');
-                }
-            });
-        }
-        closeBtn.addEventListener('click', fechar);
-        modal.addEventListener('click', (e) => { if(e.target === modal) fechar(); });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geografia do Paraná - Mapa Interativo</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <style>
-        :root {
-            --primary-green: #0a3a20;
-            --accent-gold: #d4af37;
-            --text-white: #ffffff;
-            --text-muted: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(15px);
-            --font-main: 'Montserrat', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-main);
-            background: linear-gradient(135deg, #03120a 0%, #0a3a20 100%);
-            background-attachment: fixed;
-            color: var(--text-white);
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Header Menu */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 58, 32, 0.4);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gold-text {
-            color: var(--accent-gold);
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .nav-menu a:hover, .nav-menu a.active {
-            color: var(--accent-gold);
-        }
-
-        .btn-explore {
-            border: 1px solid var(--accent-gold);
-            padding: 8px 20px;
-            border-radius: 20px;
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        /* Layout da Tela de Geografia */
-        .geo-container {
-            display: flex;
-            height: 100vh;
-            padding-top: 90px; /* Desconto do Header */
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Lado Esquerdo: O Mapa */
-        .map-section {
-            flex: 1.3;
-            height: 100%;
-            position: relative;
-            padding: 20px;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            background: #03120a;
-        }
-
-        /* Lado Direito: Painel de Informações */
-        .info-panel {
-            flex: 0.9;
-            height: 100%;
-            background: rgba(10, 58, 32, 0.25);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-left: 1px solid var(--glass-border);
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .panel-title h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .region-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-top: 5px;
-        }
-
-        /* Cards de Atributos Geográficos */
-        .geo-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 20px;
-            border-radius: 12px;
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            transition: transform 0.3s;
-        }
-
-        .geo-card:hover {
-            transform: translateX(5px);
-            border-color: rgba(212, 175, 55, 0.3);
-        }
-
-        .geo-icon {
-            font-size: 1.5rem;
-            color: var(--accent-gold);
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .geo-details h3 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: var(--text-white);
-        }
-
-        .geo-details p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        /* Customização dos popups do Leaflet para casar com o tema escuro */
-        .leaflet-popup-content-wrapper {
-            background: rgba(3, 18, 10, 0.9) !important;
-            color: #fff !important;
-            border: 1px solid var(--accent-gold);
-            font-family: var(--font-main);
-        }
-        .leaflet-popup-tip {
-            background: rgba(3, 18, 10, 0.9) !important;
-            border-left: 1px solid var(--accent-gold);
-            border-bottom: 1px solid var(--accent-gold);
-        }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .geo-container { flex-direction: column; overflow-y: auto; height: auto; }
-            .map-section { height: 50vh; flex: none; }
-            .info-panel { height: auto; flex: none; border-left: none; border-top: 1px solid var(--glass-border); }
-        }
-    </style>
-</head>
-<body>
-
-    <header class="main-header">
-        <div class="logo">
-            <i class="fa-solid fa-monument gold-text"></i>
-            <span>Museu Virtual <b class="gold-text">PR</b></span>
+            <i class="fas fa-landmark gold-text"></i>
+            Museu Virtual <span class="gold-text">PR</span>
         </div>
         <nav class="nav-menu">
             <a href="index.html">Início</a>
             <a href="historia.html">História</a>
-            <a href="geografia.html" class="active">Geografia</a>
-            <a href="#">Artes</a>
-            <a href="#" class="btn-explore">Explorar 3D</a>
+            <a href="geografia.html">Geografia</a>
+            <a href="artes.html">Artes</a>
+            <a href="explorar3d.html" class="btn-explore">Explorar 3D</a>
         </nav>
+        <div class="header-actions">
+            <button>PT</button>
+        </div>
     </header>
 
-    <main class="geo-container">
+    <!-- ==================== SEÇÃO HERO ==================== -->
+    <section class="hero-container">
+        <div class="hero-content">
+            <p class="subtitle-hero"><i class="fas fa-leaf"></i> Descubra a Terra dos Pinheirais</p>
+            <h1 class="title-hero">Uma Jornada pela <span class="gold-text">História, Arte e Natureza</span></h1>
+            <p class="description-hero">
+                Explore o Paraná através de uma experiência imersiva e interativa. 
+                Das origens indígenas ao futuro tecnológico, viaje no tempo e no espaço sem sair de casa.
+            </p>
+            <div class="hero-buttons">
+                <a href="historia.html" class="btn-primary">Iniciar Tour</a>
+                <a href="explorar3d.html" class="btn-secondary">Modo 3D</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO HISTÓRIA ==================== -->
+    <section id="historia" class="section-page" style="display:none; padding: 120px 50px 80px; background: #03120a; min-height: 100vh;">
         
-        <section class="map-section">
-            <div id="map"></div>
-        </section>
-
-        <section class="info-panel" id="info-panel">
-            <div class="panel-title">
-                <h1 id="region-title">Geografia do Paraná</h1>
-                <p id="region-subtitle" class="gold-text">Selecione um marcador dourado no mapa para explorar os detalhes da região.</p>
-                <span id="region-badge" class="region-badge" style="display: none;">Paraná</span>
+        <!-- Header Interno -->
+        <header class="main-header" style="position:absolute;">
+            <div class="logo">
+                <i class="fas fa-landmark gold-text"></i>
+                Museu Virtual <span class="gold-text">PR</span>
             </div>
+            <nav class="nav-menu">
+                <a href="index.html">Início</a>
+                <a href="historia.html">História</a>
+                <a href="geografia.html">Geografia</a>
+                <a href="artes.html">Artes</a>
+                <a href="explorar3d.html" class="btn-explore">Explorar 3D</a>
+            </nav>
+            <div class="header-actions">
+                <button>PT</button>
+            </div>
+        </header>
 
-            <div class="geo-card">
-                <div class="geo-icon"><i class="fa-solid fa-mountain"></i></div>
-                <div class="geo-details">
-                    <h3>Relevo & Altitude</h3>
-                    <p id="geo-relevo">O estado possui um relevo marcado por planaltos que descem em degraus em direção ao rio Paraná. Dividido entre Litoral, Primeiro, Segundo e Terceiro planalto.</p>
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <h1 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px; text-align:center;">História do Paraná</h1>
+            <p style="text-align:center; color: #e0e0e0; margin-bottom: 50px;">Uma viagem cronológica pelos ciclos marcantes do estado</p>
+
+            <!-- Timeline Cards -->
+            <div style="display:flex; flex-direction:column; gap:25px;">
+                <!-- Card 1 -->
+                <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:30px; transition:0.3s;">
+                    <span style="color:var(--accent-gold, #d4af37); font-size:0.85rem; font-weight:700; letter-spacing:2px;">PRÉ-COLONIAL</span>
+                    <h3 style="color:#fff; font-size:1.5rem; margin:10px 0;">Povos Indígenas</h3>
+                    <p style="color:#e0e0e0; line-height:1.7;">As ricas tradições e a presença ancestral dos povos <strong>Kaingang, Guarani e Xokleng</strong> nas terras paranaenses.</p>
+                    <a href="historia.html" style="display:inline-block; margin-top:15px; color:var(--accent-gold, #d4af37); text-decoration:none; font-weight:600;">Saber mais →</a>
+                </div>
+
+                <!-- Card 2 -->
+                <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:30px;">
+                    <span style="color:var(--accent-gold, #d4af37); font-size:0.85rem; font-weight:700; letter-spacing:2px;">SÉCULO XVIII</span>
+                    <h3 style="color:#fff; font-size:1.5rem; margin:10px 0;">O Tropeirismo</h3>
+                    <p style="color:#e0e0e0; line-height:1.7;">O movimento de tropas que desbravou caminhos, integrou o sul do país e fundou vilas históricas como a <strong>Lapa</strong> e <strong>Castro</strong>.</p>
+                    <a href="historia.html" style="display:inline-block; margin-top:15px; color:var(--accent-gold, #d4af37); text-decoration:none; font-weight:600;">Saber mais →</a>
+                </div>
+
+                <!-- Card 3 -->
+                <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:30px;">
+                    <span style="color:var(--accent-gold, #d4af37); font-size:0.85rem; font-weight:700; letter-spacing:2px;">SÉCULO XIX</span>
+                    <h3 style="color:#fff; font-size:1.5rem; margin:10px 0;">Ciclo da Erva-Mate</h3>
+                    <p style="color:#e0e0e0; line-height:1.7;">O "ouro verde" que impulsionou a economia, gerou riquezas urbanas e pavimentou a <strong>emancipação política do Paraná</strong>.</p>
+                    <a href="historia.html" style="display:inline-block; margin-top:15px; color:var(--accent-gold, #d4af37); text-decoration:none; font-weight:600;">Saber mais →</a>
+                </div>
+
+                <!-- Card 4 -->
+                <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:30px;">
+                    <span style="color:var(--accent-gold, #d4af37); font-size:0.85rem; font-weight:700; letter-spacing:2px;">SÉCULO XIX / XX</span>
+                    <h3 style="color:#fff; font-size:1.5rem; margin:10px 0;">Imigração Europeia e Asiática</h3>
+                    <p style="color:#e0e0e0; line-height:1.7;">O mosaico multicultural formado por <strong>poloneses, ucranianos, italianos, alemães e japoneses</strong> no interior do estado.</p>
+                    <a href="historia.html" style="display:inline-block; margin-top:15px; color:var(--accent-gold, #d4af37); text-decoration:none; font-weight:600;">Saber mais →</a>
                 </div>
             </div>
 
-            <div class="geo-card">
-                <div class="geo-icon"><i class="fa-solid fa-cloud-sun"></i></div>
-                <div class="geo-details">
-                    <h3>Clima & Vegetação</h3>
-                    <p id="geo-clima">Predomínio de clima Subtropical Cfa e Cfb (com invernos rigorosos nas áreas mais altas). Lar da histórica e majestosa Floresta de Araucárias.</p>
+            <!-- Curiosidade -->
+            <div style="margin-top: 50px; background: rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:20px; padding:40px; text-align:center;">
+                <span style="color:var(--accent-gold, #d4af37); text-transform:uppercase; letter-spacing:3px; font-size:0.8rem;">Você sabia?</span>
+                <p style="color:#e0e0e0; margin-top:15px; line-height:1.8;">O Paraná já foi o maior produtor mundial de café, e cidades como Londrina e Maringá surgiram desse ciclo migratório. Explore o <a href="artes.html" style="color:var(--accent-gold, #d4af37);">Grupo 3 — Artes</a> para saber mais.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SEÇÃO GEOGRAFIA ==================== -->
+    <section id="geografia" class="section-page" style="display:none; padding: 120px 50px 80px; background: #03120a; min-height: 100vh;">
+        
+        <header class="main-header" style="position:absolute;">
+            <div class="logo">
+                <i class="fas fa-landmark gold-text"></i>
+                Museu Virtual <span class="gold-text">PR</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html">Início</a>
+                <a href="historia.html">História</a>
+                <a href="geografia.html">Geografia</a>
+                <a href="artes.html">Artes</a>
+                <a href="explorar3d.html" class="btn-explore">Explorar 3D</a>
+            </nav>
+            <div class="header-actions">
+                <button>PT</button>
+            </div>
+        </header>
+
+        <div style="max-width: 1100px; margin: 0 auto;">
+            <h1 style="font-size: 2.5rem; color: #fff; margin-bottom: 10px; text-align:center;">Geografia do Paraná</h1>
+            <p style="text-align:center; color: #e0e0e0; margin-bottom: 30px;">Selecione um marcador dourado no mapa para explorar os detalhes da região.</p>
+
+            <!-- Mapa -->
+            <div id="map" style="height: 400px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); margin-bottom: 40px; z-index:1;"></div>
+
+            <!-- Info Panel -->
+            <div id="info-panel">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div id="relevo-card" style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:25px;">
+                        <h3 style="color:var(--accent-gold, #d4af37); margin-bottom:10px;">Relevo & Altitude</h3>
+                        <p id="geo-relevo" style="color:#e0e0e0; line-height:1.7;">O estado possui um relevo marcado por planaltos que descem em degraus em direção ao rio Paraná. Dividido entre Litoral, Primeiro, Segundo e Terceiro planalto.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:25px;">
+                        <h3 style="color:var(--accent-gold, #d4af37); margin-bottom:10px;">Clima & Vegetação</h3>
+                        <p id="geo-clima" style="color:#e0e0e0; line-height:1.7;">Predomínio de clima Subtropical Cfa e Cfb (com invernos rigorosos nas áreas mais altas). Lar da histórica e majestosa Floresta de Araucárias.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:25px;">
+                        <h3 style="color:var(--accent-gold, #d4af37); margin-bottom:10px;">Hidrografia</h3>
+                        <p id="geo-hidro" style="color:#e0e0e0; line-height:1.7;">Bacias hidrográficas ricas e de alto potencial energético. Destaque absoluto para os rios Iguaçu, Paranapanema, Paraná e Ivaí.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:25px;">
+                        <h3 style="color:var(--accent-gold, #d4af37); margin-bottom:10px;">Economia & Cidades</h3>
+                        <p id="geo-economia" style="color:#e0e0e0; line-height:1.7;">Uma potência no agronegócio global, forte polo industrial automotivo e tecnológico, além de abrigar uma das maiores maravilhas naturais do planeta.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="geo-card">
-                <div class="geo-icon"><i class="fa-solid fa-water"></i></div>
-                <div class="geo-details">
-                    <h3>Hidrografia</h3>
-                    <p id="geo-hidro">Bacias hidrográficas ricas e de alto potencial energético. Destaque absoluto para os rios Iguaçu, Paranapanema, Paraná e Ivaí.</p>
-                </div>
+            <div style="text-align:center; margin-top:30px;">
+                <a href="geografia.html" class="btn-primary" style="display:inline-block; padding:15px 35px; border-radius:30px; background:var(--accent-gold, #d4af37); color:#03120a; text-decoration:none; font-weight:600;">Explorar Geografia Completa →</a>
             </div>
+        </div>
+    </section>
 
-            <div class="geo-card">
-                <div class="geo-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="geo-details">
-                    <h3>Economia & Cidades</h3>
-                    <p id="geo-economia">Uma potência no agronegócio global, forte polo industrial automotivo e tecnológico, além de abrigar uma das maiores maravilhas naturais do planeta.</p>
-                </div>
-            </div>
-        </section>
+    <!-- ==================== FOOTER ==================== -->
+    <footer style="padding: 30px 50px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; background: #03120a;">
+        <p style="color: #e0e0e0; font-size: 0.9rem;">Museu Virtual do Paraná © 2026 — Todos os direitos reservados</p>
+        <p style="color: #999; font-size: 0.8rem; margin-top: 5px;">Conteúdo produzido com pesquisa histórica e referências artísticas</p>
+    </footer>
 
-    </main>
+    <!-- ==================== SCRIPTS ==================== -->
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Scripts do Projeto -->
+    <script src="js/particles.js"></script>
+    <script src="js/app.js"></script>
 
     <script>
-        // 1. INICIALIZAÇÃO DO MAPA (Centralizado no Paraná)
-        // Coordenadas aproximadas do centro do Paraná: -24.7, -51.5
-        const map = L.map('map').setView([-24.75, -51.60], 7);
-
-        // Adiciona uma camada de mapa com visual escuro elegante (CartoDB Dark Matter)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 12,
-            minZoom: 6
-        }).addTo(map);
-
-        // 2. BANCO DE DADOS GEOGRÁFICO DO ESTADO
-        const geoData = {
-            curitiba: {
-                title: "Curitiba e Região Metropolitana",
-                badge: "Primeiro Planalto",
-                relevo: "Planalto cristalino plano-ondulado com altitude média de 934 metros acima do nível do mar.",
-                clima: "Clima Subtropical Cfb, com verões amenos e invernos frios. Vegetação original composta por campos limpos e capões de Araucária.",
-                hidro: "Cortada pela bacia do Alto Iguaçu, contando com rios importantes como o Rio Belém e o Rio Barigui.",
-                economia: "Forte polo industrial (automotivo, mecânico), centro administrativo estadual e referência internacional em planejamento urbano."
-            },
-            foz: {
-                title: "Foz do Iguaçu e Extremo Oeste",
-                badge: "Terceiro Planalto / Calha do Paraná",
-                relevo: "Planalto basáltico plano, declinando suavemente em direção ao Rio Paraná com altitudes em torno de 180 metros.",
-                clima: "Subtropical Cfa, quente, úmido e com verões intensos. Antiga área de transição para a Floresta Estacional Semidecidual.",
-                hidro: "Encontro dos gigantescos rios Iguaçu e Paraná. Abriga as Cataratas do Iguaçu e o imenso reservatório de Itaipu Binacional.",
-                economia: "Baseada fortemente no turismo internacional, produção de energia elétrica limpa, comércio de fronteira e logística de exportação."
-            },
-            londrina: {
-                title: "Londrina, Maringá e Norte Pioneiro",
-                badge: "Terceiro Planalto / Norte",
-                relevo: "Relevo levemente ondulado composto pela famosa Terra Roxa (de origem vulcânica), extremamente fértil, média de 600m de altitude.",
-                clima: "Transição para o clima tropical (Cfa), invernos secos e quentes. Vegetação original de mata densa tropical.",
-                hidro: "Abastecido pelas sub-bacias do Rio Tibagi, Rio Paranapanema e Rio Pirapó.",
-                economia: "Eixo de altíssimo desenvolvimento impulsionado pelo agronegócio de alta tecnologia, indústrias alimentícias, saúde e eixos universitários."
-            },
-            ponta: {
-                title: "Ponta Grossa e Campos Gerais",
-                badge: "Segundo Planalto",
-                relevo: "Marcado por escarpas e formações rochosas espetaculares de arenito (Vila Velha) com altitudes variando entre 800m e 1000m.",
-                clima: "Subtropical Cfb, úmido, propenso a geadas fortes no inverno. Mistura de campos nativos nativos e bosques de pinhais.",
-                hidro: "Bacia do Rio Tibagi e Rio Pitangui, com canions e belíssimas quedas d'água naturais.",
-                economia: "Grande entroncamento rodoferroviário do Sul, um dos maiores polos de agroindústria e cooperativismo da América Latina."
-            },
-            paranagua: {
-                title: "Paranaguá e o Litoral Paranaense",
-                badge: "Planície Litorânea",
-                relevo: "Planícies costeiras arenosas e restingas travadas abruptamente pela majestosa muralha da Serra do Mar.",
-                clima: "Clima Superúmido Tropical/Subtropical de baixada, sem estação seca definida. Lar da preservada e exuberante Mata Atlântica.",
-                hidro: "Complexo estuarino da Baía de Paranaguá, alimentado por pequenos rios de serra de fluxo rápido.",
-                economia: "Comandada pela atividade portuária de Paranaguá (um dos portos de grãos mais eficientes do mundo), turismo de praias e pesca."
-            }
-        };
-
-        // 3. ADICIONANDO MARCADORES DOURADOS PERSONALIZADOS
-        // Ícone customizado dourado usando folha de estilo interna do Leaflet
-        const goldIcon = L.divIcon({
-            html: '<i class="fa-solid fa-location-dot" style="color: #d4af37; font-size: 24px; filter: drop-shadow(0 0 5px rgba(212,175,55,0.7));"></i>',
-            iconSize: [24, 24],
-            iconAnchor: [12, 24],
-            popupAnchor: [0, -20],
-            className: 'custom-marker'
-        });
-
-        // Configuração dos Pontos Geográficos no Mapa
-        const markers = [
-            { coords: [-25.4284, -49.2733], key: 'curitiba', popup: "Curitiba (Capitál)" },
-            { coords: [-25.5478, -54.5881], key: 'foz', popup: "Foz do Iguaçu" },
-            { coords: [-23.3106, -51.1628], key: 'londrina', popup: "Londrina & Região Norte" },
-            { coords: [-25.0950, -50.1619], key: 'ponta', popup: "Campos Gerais" },
-            { coords: [-25.5204, -48.5093], key: 'paranagua', popup: "Paranaguá & Litoral" }
-        ];
-
-        // Mapeia e adiciona as funções de clique a cada ponto
-        markers.forEach(m => {
-            const marker = L.marker(m.coords, { icon: goldIcon }).addTo(map);
-            marker.bindPopup(`<b>${m.popup}</b>`);
-
-            marker.on('click', () => {
-                atualizarPainelInfo(m.key);
-            });
-        });
-
-        // 4. ATUALIZAÇÃO DINÂMICA DO PAINEL DIREITO (GSAP)
-        function atualizarPainelInfo(key) {
-            const data = geoData[key];
-            if (!data) return;
-
-            // Cria um efeito "piscar" suave de transição de dados com GSAP
-            gsap.fromTo('#info-panel > *', 
-                { opacity: 0, x: 20 }, 
-                { opacity: 1, x: 0, duration: 0.4, stagger: 0.05 }
-            );
-
-            // Injeta os dados nos elementos do painel
-            document.getElementById('region-title').innerText = data.title;
-            document.getElementById('region-subtitle').style.display = 'none'; // Esconde a dica inicial
+        // ========== MAPA INTERATIVO COM LEAFLET ==========
+        document.addEventListener('DOMContentLoaded', function() {
             
-            const badge = document.getElementById('region-badge');
-            badge.innerText = data.badge;
-            badge.style.display = 'inline-block';
+            // Inicializar o mapa
+            const map = L.map('map').setView([-24.5, -51.5], 6.5);
 
-            document.getElementById('geo-relevo').innerText = data.relevo;
-            document.getElementById('geo-clima').innerText = data.clima;
-            document.getElementById('geo-hidro').innerText = data.hidro;
-            document.getElementById('geo-economia').innerText = data.economia;
-        }
+            // Tile Layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Ícone dourado personalizado
+            const goldIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            // Dados das regiões
+            const geoData = {
+                curitiba: {
+                    title: 'Curitiba & Região Metropolitana',
+                    badge: 'CAPITAL',
+                    relevo: 'Primeiro Planalto — altitudes entre 900 e 1000m. Relevo suavemente ondulado.',
+                    clima: 'Clima subtropical Cfb — verões amenos e invernos frios com geadas frequentes.',
+                    hidro: 'Bacia do Alto Iguaçu — rio que corta a capital e abastece a região metropolitana.',
+                    economia: 'Polo automotivo, tecnológico e de serviços. Um dos maiores PIBs do Brasil.'
+                },
+                londrina: {
+                    title: 'Londrina & Região Norte',
+                    badge: 'CAFÉ',
+                    relevo: 'Terceiro Planalto — relevo de colotes suaves (mar de morros). Terra roxa fértil.',
+                    clima: 'Clima subtropical Cfa — verões quentes e chuvosos. Ideal para o café.',
+                    hidro: 'Bacia do Rio Tibagi — rio de grande potencial energético.',
+                    economia: 'Agronegócio forte (soja, milho, café). Polo industrial e tecnológico do Norte.'
+                },
+                foz: {
+                    title: 'Foz do Iguaçu & Oeste',
+                    badge: 'CATARATAS',
+                    relevo: 'Terceiro Planalto — próximo ao Rio Paraná. Relevo acidentado com vales profundos.',
+                    clima: 'Clima subtropical Cfa — muito quente no verão. Alta umidade.',
+                    hidro: 'Bacia do Rio Paraná — maior bacia do estado. Cataratas do Iguaçu.',
+                    economia: 'Turismo (Cataratas e Itaipu). Comércio e agropecuária.'
+                },
+                ponta: {
+                    title: 'Campos Gerais',
+                    badge: 'TROPEIRISMO',
+                    relevo: 'Segundo Planalto — Escarpa Devoniana. Cânions e formações rochosas.',
+                    clima: 'Clima Cfb — invernos rigorosos. Geadas frequentes.',
+                    hidro: 'Bacia do Rio Tibagi — rio de corredeiras e cachoeiras.',
+                    economia: 'Agropecuária, turismo e indústria de papel e celulose.'
+                },
+                paranagua: {
+                    title: 'Paranaguá & Litoral',
+                    badge: 'PORTO',
+                    relevo: 'Planície Litorânea — baixa altitude. Serra do Mar como barreira natural.',
+                    clima: 'Clima tropical superúmido — chuvas abundantes o ano todo.',
+                    hidro: 'Bacia Litorânea — rios curtos que desembocam no Atlântico.',
+                    economia: 'Porto de Paranaguá — maior exportador de grãos do Brasil. Turismo.'
+                }
+            };
+
+            // Marcadores
+            const markers = [
+                { coords: [-25.4284, -49.2733], key: 'curitiba', popup: 'Curitiba & Capital' },
+                { coords: [-23.3106, -51.1628], key: 'londrina', popup: 'Londrina & Região Norte' },
+                { coords: [-25.5478, -54.5881], key: 'foz', popup: 'Foz do Iguaçu' },
+                { coords: [-25.0950, -50.1619], key: 'ponta', popup: 'Campos Gerais' },
+                { coords: [-25.5204, -48.5093], key: 'paranagua', popup: 'Paranaguá & Litoral' }
+            ];
+
+            // Adiciona marcadores
+            markers.forEach(m => {
+                const marker = L.marker(m.coords, { icon: goldIcon }).addTo(map);
+                marker.bindPopup(`<b>${m.popup}</b>`);
+
+                marker.on('click', () => {
+                    atualizarPainelInfo(m.key);
+                });
+            });
+
+            // Função para atualizar o painel de informações
+            function atualizarPainelInfo(key) {
+                const data = geoData[key];
+                if (!data) return;
+
+                // Scroll suave até o painel
+                document.getElementById('info-panel').scrollIntoView({ behavior: 'smooth' });
+
+                // Animação GSAP
+                gsap.fromTo('#info-panel > *', 
+                    { opacity: 0, x: 20 }, 
+                    { opacity: 1, x: 0, duration: 0.4, stagger: 0.05 }
+                );
+
+                // Preenche os dados
+                document.getElementById('geo-relevo').innerText = data.relevo;
+                document.getElementById('geo-clima').innerText = data.clima;
+                document.getElementById('geo-hidro').innerText = data.hidro;
+                document.getElementById('geo-economia').innerText = data.economia;
+                
+                // Destaca o card de relevo
+                document.getElementById('relevo-card').querySelector('h3').innerHTML = `${data.title}`;
+            }
+
+            // Animação inicial do mapa
+            gsap.from('#map', { opacity: 0, y: 30, duration: 1, delay: 0.5 });
+        });
     </script>
+
 </body>
 </html>
