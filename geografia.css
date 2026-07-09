@@ -1,0 +1,122 @@
+/* ============================================
+   PÁGINA GEOGRAFIA — MUSEU VIRTUAL DO PARANÁ
+   ============================================ */
+
+body {
+    overflow-y: auto;
+    height: auto;
+    background: #03120a;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.gold-label {
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.section-tag {
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-gold);
+    padding: 5px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    display: inline-block;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-header h2 {
+    font-size: 2.2rem;
+    color: var(--text-white);
+    margin: 15px 0;
+}
+
+/* Hero */
+.geo-hero {
+    height: 45vh;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #03120a 0%, #0a3a20 30%, #1a0f0a 100%);
+    margin-top: 80px;
+}
+
+.geo-hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-white);
+    margin: 20px 0 15px;
+}
+
+.geo-hero-content p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* Overview Grid */
+.geo-overview {
+    padding: 60px 0;
+}
+
+.geo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.geo-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.geo-card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-5px);
+}
+
+.geo-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.geo-card h3 {
+    color: var(--accent-gold);
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.geo-card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+/* Foco Norte/Oeste */
+.geo-foco {
+    padding: 60px 0;
+    background: rgba(10, 58, 32, 0.05);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.foco-grid {
+    display: grid;
+    grid-template-columns:
