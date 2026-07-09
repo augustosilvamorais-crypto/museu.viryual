@@ -3,490 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>História do Paraná - Linha do Tempo</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <style>
-        :root {
-            --primary-green: #0a3a20;
-            --accent-gold: #d4af37;
-            --text-white: #ffffff;
-            --text-muted: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(15px);
-            --font-main: 'Montserrat', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-main);
-            background: linear-gradient(135deg, #03120a 0%, #0a3a20 100%);
-            background-attachment: fixed;
-            color: var(--text-white);
-            overflow-x: hidden;
-            padding-bottom: 80px;
-        }
-
-        /* Canvas de Partículas */
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Header Menu */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 58, 32, 0.3);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gold-text {
-            color: var(--accent-gold);
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .nav-menu a:hover, .nav-menu a.active {
-            color: var(--accent-gold);
-        }
-
-        .btn-explore {
-            border: 1px solid var(--accent-gold);
-            padding: 8px 20px;
-            border-radius: 20px;
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        /* Container da Linha do Tempo */
-        .timeline-container {
-            position: relative;
-            z-index: 2;
-            padding: 150px 20px 50px 20px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .timeline-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .timeline-header h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .timeline-wrapper {
-            position: relative;
-        }
-
-        /* A Linha Central */
-        .timeline-line {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--accent-gold) 0%, rgba(212, 175, 55, 0.1) 100%);
-            transform: translateX(-50%);
-        }
-
-        /* Itens da Linha */
-        .timeline-item {
-            position: relative;
-            width: 50%;
-            padding: 20px 40px;
-            margin-bottom: 30px;
-            cursor: pointer;
-        }
-
-        .timeline-item.left {
-            left: 0;
-            text-align: right;
-        }
-
-        .timeline-item.right {
-            left: 50%;
-            text-align: left;
-        }
-
-        /* Pontos Dinâmicos na Linha */
-        .timeline-dot {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: var(--accent-gold);
-            border-radius: 50%;
-            top: 45px;
-            z-index: 3;
-            box-shadow: 0 0 10px var(--accent-gold);
-            transition: transform 0.3s;
-        }
-
-        .timeline-item:hover .timeline-dot {
-            transform: scale(1.4);
-        }
-
-        .left .timeline-dot { right: -8px; }
-        .right .timeline-dot { left: -8px; }
-
-        /* Cards Estilo Glassmorphism */
-        .timeline-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            border-radius: 15px;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-        }
-
-        .timeline-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .timeline-date {
-            color: var(--accent-gold);
-            font-weight: 600;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .timeline-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 12px;
-        }
-
-        .timeline-card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .btn-more {
-            margin-top: 15px;
-            background: none;
-            border: none;
-            color: var(--accent-gold);
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Janela Modal de Informações */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: rgba(10, 58, 32, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            padding: 40px;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.6rem;
-            cursor: pointer;
-        }
-
-        .modal-body h2 {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-        }
-
-        .modal-date-info {
-            color: var(--accent-gold);
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .modal-desc {
-            color: var(--text-muted);
-            line-height: 1.7;
-            font-size: 1.05rem;
-            margin-bottom: 25px;
-        }
-
-        .curiosity-box {
-            background: rgba(212, 175, 55, 0.08);
-            border-left: 4px solid var(--accent-gold);
-            padding: 20px;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .curiosity-box h4 {
-            color: var(--accent-gold);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Responsividade da Linha do Tempo */
-        @media (max-width: 768px) {
-            .timeline-line { left: 20px; }
-            .timeline-item { width: 100%; text-align: left !important; padding-left: 50px; padding-right: 10px; }
-            .timeline-item.right { left: 0; }
-            .timeline-dot { left: 12px !important; }
-        }
-    </style>
+    <title>História — Museu Virtual do Paraná</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/historia.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <canvas id="particles-canvas"></canvas>
-
     <header class="main-header">
-        <div class="logo">
-            <i class="fa-solid fa-monument gold-text"></i>
-            <span>Museu Virtual <b class="gold-text">PR</b></span>
-        </div>
+        <div class="logo">Museu Virtual <span class="gold-text">PR</span></div>
         <nav class="nav-menu">
             <a href="index.html">Início</a>
             <a href="historia.html" class="active">História</a>
-            <a href="#">Geografia</a>
-            <a href="#">Artes</a>
-            <a href="#" class="btn-explore">Explorar 3D</a>
+            <a href="geografia.html">Geografia</a>
+            <a href="artes.html">Artes</a>
+            <a href="explorar3d.html" class="btn-explore">Explorar 3D</a>
         </nav>
+        <div class="header-actions">
+            <button>PT</button>
+        </div>
     </header>
 
-    <main class="timeline-container">
-        <div class="timeline-header">
-            <h1>História do Paraná</h1>
-            <p class="gold-text">Uma viagem cronológica pelos ciclos marcantes do estado</p>
-        </div>
+    <main>
+        <!-- Hero -->
+        <section class="historia-hero">
+            <div class="historia-hero-content">
+                <span class="section-tag">LINHA DO TEMPO</span>
+                <h1>História do Paraná</h1>
+                <p>Uma viagem cronológica pelos ciclos marcantes do estado</p>
+            </div>
+        </section>
 
-        <div class="timeline-wrapper">
-            <div class="timeline-line"></div>
+        <!-- Timeline -->
+        <section class="timeline-section">
+            <div class="container">
+                <div class="timeline">
 
-            <div class="timeline-item left" data-period="indigenas">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">PRÉ-COLONIAL</span>
-                    <h3>Povos Indígenas</h3>
-                    <p>As ricas tradições e a presença ancestral dos povos Kaingang, Guarani e Xokleng nas terras paranaenses.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
+                    <!-- Card 1: Pré-Colonial -->
+                    <div class="timeline-card">
+                        <div class="timeline-marker">
+                            <span>PRÉ-COLONIAL</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Povos Indígenas</h3>
+                            <p>As ricas tradições e a presença ancestral dos povos <strong>Kaingang, Guarani e Xokleng</strong> nas terras paranaenses.</p>
+                            <div class="timeline-tags">
+                                <span>Kaingang</span>
+                                <span>Guarani</span>
+                                <span>Xokleng</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Tropeirismo -->
+                    <div class="timeline-card">
+                        <div class="timeline-marker">
+                            <span>SÉC. XVIII</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>O Tropeirismo</h3>
+                            <p>O movimento de tropas que desbravou caminhos, integrou o sul do país e fundou vilas históricas como a <strong>Lapa</strong> e <strong>Castro</strong>.</p>
+                            <div class="timeline-tags">
+                                <span>Tropeiros</span>
+                                <span>Caminho do Sul</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Erva-Mate -->
+                    <div class="timeline-card">
+                        <div class="timeline-marker">
+                            <span>SÉC. XIX</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Ciclo da Erva-Mate</h3>
+                            <p>O "ouro verde" que impulsionou a economia, gerou riquezas urbanas e pavimentou a <strong>emancipação política do Paraná</strong>.</p>
+                            <div class="timeline-tags">
+                                <span>Ouro Verde</span>
+                                <span>Emancipação</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Imigração Europeia -->
+                    <div class="timeline-card">
+                        <div class="timeline-marker">
+                            <span>SÉC. XIX/XX</span>
+                        </div>
+                        <div class="timeline-content">
+                            <h3>Imigração Europeia e Asiática</h3>
+                            <p>O mosaico multicultural formado por <strong>poloneses, ucranianos, italianos, alemães e japoneses</strong> no interior do estado.</p>
+                            <div class="timeline-tags">
+                                <span>Poloneses</span>
+                                <span>Ucranianos</span>
+                                <span>Italianos</span>
+                                <span>Japoneses</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: GRUPO 3 - A CONQUISTA DO NORTE E OESTE -->
+                    <div class="timeline-card grupo3-card">
+                        <div class="timeline-marker grupo3-marker">
+                            <span>1930-1970</span>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="grupo3-badge">GRUPO 3</div>
+                            <h3>A Conquista do Norte e Oeste</h3>
+                            <p class="subtitulo-destaque">Migrações Internas · Ciclo do Café · Urbanização Planejada</p>
+                            <p>
+                                Entre as décadas de 1930 e 1970, o Paraná viveu sua maior transformação demográfica e econômica. 
+                                <strong>Paulistas, mineiros e, massivamente, nordestinos</strong> migraram para as regiões Norte e Oeste do estado, 
+                                impulsionados pela expansão da fronteira agrícola e pelo <strong>ciclo do café</strong>.
+                            </p>
+                            <div class="grupo3-details">
+                                <div class="detail-item">
+                                    <h4>🌱 Causas da Migração</h4>
+                                    <ul>
+                                        <li>Esgotamento do solo no Sudeste (café)</li>
+                                        <li>Propaganda das colonizadoras (terras férteis)</li>
+                                        <li>Seca no Nordeste (décadas de 1930 e 1950)</li>
+                                        <li>Ferrovia como vetor de expansão</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>🏙️ Cidades Planejadas</h4>
+                                    <ul>
+                                        <li><strong>Londrina</strong> (1934) — "Capital do Café"</li>
+                                        <li><strong>Maringá</strong> (1947) — Cidade-jardim planejada</li>
+                                        <li><strong>Cianorte</strong> (1950) — Pequena Londres</li>
+                                        <li><strong>Umuarama</strong> (1955) — Fronteira final</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>👥 Perfil dos Migrantes</h4>
+                                    <ul>
+                                        <li><strong>Paulistas:</strong> Técnicos em cafeicultura</li>
+                                        <li><strong>Mineiros:</strong> Experiência em terras altas</li>
+                                        <li><strong>Nordestinos:</strong> Maior contingente — mão de obra braçal</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-item">
+                                    <h4>☕ Impacto do Café</h4>
+                                    <ul>
+                                        <li>Terra roxa — solo vulcânico fértil</li>
+                                        <li>Maior produtor mundial de café (década de 1950)</li>
+                                        <li>Acumulação de capital para industrialização</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="conexao-arte">
+                                <span>🎨 Conexão com Artes:</span>
+                                <p>Este tema é explorado na página <a href="artes.html">Artes</a>, com referência ao expressionismo social de <strong>Theodoro Braga</strong> e a representação do trabalhador migrante.</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+        </section>
 
-            <div class="timeline-item right" data-period="tropeirismo">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XVIII</span>
-                    <h3>O Tropeirismo</h3>
-                    <p>O movimento de tropas que desbravou caminhos, integrou o sul do país e fundou vilas históricas como a Lapa e Castro.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
+        <!-- Curiosidade -->
+        <section class="curiosidade-section">
+            <div class="container">
+                <div class="curiosidade-box">
+                    <span class="gold-label">VOCÊ SABIA?</span>
+                    <h2>Londrina já foi a "Capital Mundial do Café"</h2>
+                    <p>Na década de 1950, Londrina era o maior centro de produção e comercialização de café do mundo. A cidade cresceu de 2.000 habitantes em 1934 para mais de 100.000 em 1960 — um dos maiores crescimentos urbanos do Brasil no século XX.</p>
                 </div>
             </div>
+        </section>
 
-            <div class="timeline-item left" data-period="ervamate">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XIX</span>
-                    <h3>Ciclo da Erva-Mate</h3>
-                    <p>O "ouro verde" que impulsionou a economia, gerou riquezas urbanas e pavimentou a emancipação política do Paraná.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
+        <footer class="main-footer">
+            <div class="container">
+                <p>Museu Virtual do Paraná © 2026 — Conteúdo: Grupos de Pesquisa</p>
+                <p class="footer-small">Fontes: Arquivo Público do Paraná · IBGE · Acervos históricos de Londrina e Maringá</p>
             </div>
-
-            <div class="timeline-item right" data-period="colonizacao">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="timeline-date">SÉCULO XIX / XX</span>
-                    <h3>Imigração Europeia e Asiática</h3>
-                    <p>O mosaico multicultural formado por poloneses, ucranianos, italianos, alemães e japoneses no interior do estado.</p>
-                    <span class="btn-more">Saber mais <i class="fa-solid fa-arrow-right"></i></span>
-                </div>
-            </div>
-        </div>
+        </footer>
     </main>
 
-    <div id="history-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-body">
-                <span id="modal-date" class="modal-date-info"></span>
-                <h2 id="modal-title"></h2>
-                <p id="modal-desc" class="modal-desc"></p>
-                <div class="curiosity-box">
-                    <h4><i class="fa-solid fa-lightbulb"></i> Você sabia?</h4>
-                    <p id="modal-curiosity"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 1. ENGINE DE PARTÍCULAS REUTILIZADA
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.3 - 0.15;
-                this.speedY = Math.random() * 0.3 - 0.15;
-                this.alpha = Math.random() * 0.4 + 0.2;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
-                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
-            }
-            draw() {
-                ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = '#d4af37';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.restore();
-            }
-        }
-        for(let i=0; i<60; i++) { particlesArray.push(new Particle()); }
-        function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); particlesArray.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
-        loop();
-
-        // 2. BANCO DE DADOS LOCAL DA LINHA DO TEMPO
-        const infoData = {
-            indigenas: {
-                title: "Povos Indígenas",
-                date: "Período Anterior à Colonização",
-                desc: "Originalmente, as terras paranaenses eram habitadas por orgulhosas nações nativas. Os Kaingang viviam nos planaltos centrais sob a sombra das florestas de Araucária. Os Guarani dominavam os vales dos grandes rios e o litoral, enquanto os Xokleng percorriam as serras densas. Deixaram um legado inestimável de nomes geográficos, respeito à natureza e culinária.",
-                curiosity: "A semente da Araucária, o Pinhão, era a base alimentar essencial para a sobrevivência dos povos Kaingang durante os rigorosos meses de inverno."
-            },
-            tropeirismo: {
-                title: "O Tropeirismo",
-                date: "Século XVIII",
-                desc: "Os tropeiros conduziam grandes comitivas de muares e gado bovino vindos do Rio Grande do Sul até as feiras do Sudeste. O trajeto feito por eles cruzava o Paraná de ponta a ponta. Os locais onde as tropas paravam para descansar, os chamados 'pousos', transformaram-se diretamente em cidades prósperas, como a Lapa, Ponta Grossa e Castro.",
-                curiosity: "O tradicional prato paranaense 'Entrevero de Pinhão' e o 'Arroz de Carreteiro' surgiram diretamente nos acampamentos improvisados das viagens tropeiras."
-            },
-            ervamate: {
-                title: "Ciclo da Erva-Mate",
-                date: "Século XIX",
-                desc: "A extração e a industrialização da Erva-Mate foram as grandes responsáveis pela arrancada financeira do Paraná no século XIX. O comércio gerou fortunas para barões locais e impulsionou a construção de ferrovias engenhosas para levar a produção até o litoral, criando a base para que o Paraná se separasse politicamente de São Paulo em 1853.",
-                curiosity: "O Barão do Serro Azul tornou-se o maior produtor de erva-mate do planeta e usou sua influência para modernizar os portos e a capital do estado."
-            },
-            colonizacao: {
-                title: "Imigração e Colonização",
-                date: "Século XIX / XX",
-                desc: "Para povoar as vastas terras do interior, o governo incentivou núcleos coloniais. Famílias polonesas, ucranianas, italianas, alemãs e, mais tarde, japonesas trouxeram suas bagagens culturais. Essa união desenhou o perfil agrícola, os traços arquitetônicos charmosos e as festas religiosas e folclóricas típicas do Paraná.",
-                curiosity: "A cidade de Prudentópolis, no interior do estado, abriga a maior comunidade de descendentes e falantes da língua ucraniana em toda a América Latina."
-            }
-        };
-
-        // 3. EVENTOS DE ABERTURA DO MODAL (GSAP)
-        const modal = document.getElementById('history-modal');
-        const closeBtn = document.querySelector('.close-modal');
-
-        document.querySelectorAll('.timeline-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const key = item.getAttribute('data-period');
-                const data = infoData[key];
-
-                if(data) {
-                    document.getElementById('modal-title').innerText = data.title;
-                    document.getElementById('modal-date').innerText = data.date;
-                    document.getElementById('modal-desc').innerText = data.desc;
-                    document.getElementById('modal-curiosity').innerText = data.curiosity;
-
-                    modal.classList.add('active');
-                    gsap.fromTo('.modal-content', 
-                        { scale: 0.85, opacity: 0 }, 
-                        { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' }
-                    );
-                }
-            });
-        });
-
-        function fechar() {
-            gsap.to('.modal-content', {
-                scale: 0.85, opacity: 0, duration: 0.3, onComplete: () => {
-                    modal.classList.remove('active');
-                }
-            });
-        }
-        closeBtn.addEventListener('click', fechar);
-        modal.addEventListener('click', (e) => { if(e.target === modal) fechar(); });
-    </script>
+    <canvas id="particles-canvas"></canvas>
+    <script src="js/particles.js"></script>
+    <script src="js/historia.js"></script>
 </body>
 </html>
